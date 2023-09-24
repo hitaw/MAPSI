@@ -51,10 +51,8 @@ def discretisation_prix_au_km(d,n):
     for donnee in d:
         x = donnee[10]/donnee[13]
         liste.append(x)
-        if x > maxi:
-            maxi = x
-        elif x < mini:
-            mini = x
+        maxi = max(x,maxi)
+        mini = min(x,mini)
     
     bornes = []
     intervalle = (maxi-mini)/n
@@ -71,4 +69,63 @@ def discretisation_prix_au_km(d,n):
     print("effectifs =" + str(effectifs))
     
     plt.bar(bornes, effectifs+[0], width = 0.02, color = 'red')
+
+def loi_jointe_distance_marque(d,n,dico_marques):
+
+    donnees = d[:,13]
+    maxi = 0
+    mini = 500
+
+    for x in donnees:
+        maxi = max(x, maxi)
+        mini = min(x, mini)
+
+    bornes = []
+    intervalle = (maxi-mini)/n
+
+    j = mini
+    for i in range(0,n+1):
+        bornes.append(j)
+        j += intervalle
+    bornes.sort()
+
+    dist_discr = np.zeros(donnees.shape)
+
+    for i in range(0, np.size(donnees)):
+        dist_discr[i] = int((donnees[i] - mini)//intervalle)
+
+
+    mat = np.zeros((len(bornes)-1,len(dico_marques)))
+
+    for i in range(0,len(bornes)-1):
+        for j in range(0,len(dico_marques)):
+            mat[i][j] = np.where((dist_discr[:]==i) & (d[:,11]==j) ,1,0).sum()
+    mat /= mat.sum()
+
+    fig, ax = plt.subplots(1,1)
+    plt.imshow(mat, interpolation='nearest')
+    ax.set_xticks(np.arange(len(dico_marques)))
+    ax.set_xticklabels(dico_marques.keys(),rotation=90,fontsize=8)
+    plt.show()
+    
+def loi_conditionnelle(jointe_dm):
+    pass
+
+def check_conditionnelle(dm):
+    pass
+
+def trace_trajectoires(data):
+    pass
+
+def calcule_matrice_distance(data,coord):
+    pass
+
+def calcule_coord_plus_proche(matrice_dist):
+    pass
+
+def test_correlation_distance_prix(data):
+    pass
+
+def test_correlation_distance_confort(data):
+    pass
 
