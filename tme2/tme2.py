@@ -113,7 +113,38 @@ def calcXTcondYZ(P_XYZT):
     return np.array(mat)
 
 def calcX_etTcondYZ(P_XYZT):
-    pass
+    P_YZ = calcYZ(P_XYZT)
+    P_XcondYZ = np.zeros((2, 2, 2))
+    P_TcondYZ = np.zeros((2, 2, 2))
+    
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                for t in range(2):
+                    P_XcondYZ[x][y][z] += P_XYZT[x][y][z][t]
+                    P_TcondYZ[t][y][z] += P_XYZT[x][y][z][t]
+    
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                P_XcondYZ[x][y][z] /= P_YZ[y][z]
+                P_TcondYZ[x][y][z] /= P_YZ[y][z]
+                    
+    return P_XcondYZ, P_TcondYZ
 
-def testXTindepCondYZ(P_XYZT,epsilon):
-    pass
+def testXTindepCondYZ(P_XYZT, epsilon=1e-10):
+    P_XcondYZ, P_TcondYZ = calcX_etTcondYZ(P_XYZT)
+    P_XTcondYZ = calcXTcondYZ(P_XYZT)
+    
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                for t in range(2):
+                    left_side = P_XcondYZ[x][y][z] * P_TcondYZ[t][y][z]
+                    right_side = P_XTcondYZ[x][y][z][t]
+                    
+                    if abs(left_side - right_side) > epsilon:
+                        return False
+    
+    return True
+
