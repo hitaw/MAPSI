@@ -148,3 +148,29 @@ def testXTindepCondYZ(P_XYZT, epsilon=1e-10):
     
     return True
 
+# 3 - 2 Indépendance de X et Y
+
+def testXindepYZ(P_XYZT, epsilon):
+    P_XYZ = np.zeros((2, 2, 2))
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                for t in range(2):
+                    P_XYZ[x][y][z] += P_XYZT[x][y][z][t]
+    P_X = np.zeros(2)
+    P_YZ = np.zeros((2,2))
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                P_X[x] += P_XYZ[x][y][z]
+                P_YZ[y][z] += P_XYZ[x][y][z]
+                
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                left_side = P_X[x] * P_YZ[y][z]
+                right_side = P_XYZ[x][y][z]
+                    
+                if abs(left_side - right_side) > epsilon:
+                    return False
+    return True
