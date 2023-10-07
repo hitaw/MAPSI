@@ -8,7 +8,23 @@ import math
 import matplotlib.pyplot as plt
 import pickle as pkl
 
-def learnML_parameters ( X_train,Y_train ):
+#fonction avec np.mean et np.std
+def learnML_parameters(X_train, Y_train):
+    n, d = X_train.shape
+    mu = np.zeros((10, d))
+    sig = np.zeros((10, d))
+    cmpt_cla = np.bincount(Y_train, minlength=10)
+    
+    for i in range(10):
+        mu[i] = np.mean(X_train[Y_train == i], axis=0)
+    
+    for i in range(10):
+        sig[i] = np.std(X_train[Y_train == i], axis=0)
+    
+    return mu, sig
+
+#fonction sans
+"""def learnML_parameters ( X_train,Y_train ):
     mu = np.zeros((10,256))
     cmpt_cla = np.zeros(10)
     sig = np.zeros((10,256))
@@ -20,7 +36,6 @@ def learnML_parameters ( X_train,Y_train ):
         cmpt_cla[classe] += 1
         for pixel in range(d):
             mu[classe][pixel] += X_train[image][pixel]
-            
     
     for i in range(10):
         for j in range(256):
@@ -36,7 +51,7 @@ def learnML_parameters ( X_train,Y_train ):
             sig[i][j] /= cmpt_cla[i]
             sig[i][j] = math.sqrt(sig[i][j])
             
-    return mu,sig
+    return mu,sig"""
         
     
 def log_likelihood(X_train_i, mu_i, sig_i, defeps):
@@ -87,18 +102,14 @@ def matrice_confusion(Y_train, Y_train_hat):
             
     return mat
 
-def classificationRate(Y_train,Y_train_hat):
-    
-    rate = 0
-    n = Y_train.shape[0]
+def classificationRate(Y_train, Y_train_hat):
     
     mat = matrice_confusion(Y_train, Y_train_hat)
     
-    for i in range(10):
-        rate += mat[i][i]
+    rate = np.trace(mat)/len(Y_train)
     
-    rate /= n
     return rate
+
 
 def classifTest(X_test,Y_test,mu,sig,eps):
     
@@ -108,7 +119,7 @@ def classifTest(X_test,Y_test,mu,sig,eps):
     rate = classificationRate(Y_test, Y_hat)
     print("2 - Classification rate : " + str(rate))
     
-    print("Matrice de confusion :")
+    print("3 - Matrice de confusion :")
     mat = matrice_confusion(Y_test, Y_hat)
     
     plt.figure(figsize=(3,3))
@@ -117,23 +128,37 @@ def classifTest(X_test,Y_test,mu,sig,eps):
     return np.where(Y_test!=Y_hat)
 
 
-#B
+#B - Modélisation par une loi de Bernoulli
 
 def binarisation(X):
-    Xb = np.zeros(X.shape)
+    return np.where(X>0,1,0)
 
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            if X[i][j] > 0:
-                Xb[i][j] = 1
-    return Xb
-
-def learnBernouilli(Xb, Y):
-    pass
+def learnBernoulli(Xb, Y):
+    theta = []
+    for i in range(10):
+        theta.append(Xb[Y==i].mean(axis=0))
+    return np.array(theta)
 
 def logpobsBernoulli(X, theta, epsilon):
-    pass
+    theta_sans_0 = np.where(theta < epsilon, epsilon, np.where(theta > (1 - epsilon), 1 - epsilon, theta))
+    return np.sum(X * np.log(theta_sans_0) + (1 - X) * np.log(1 - theta_sans_0), axis=1)
+
 
 def classifBernoulliTest(Xb, Y, theta):
-    pass
+    print("1 - Classify all test images ...") 
+    mu,sig = learnML_parameters(Xb,Y,)
+    Y_hat = classify_all_images(Xb, mu, sig, -1)
+    
+    rate = classificationRate(Y, Y_hat)
+    print("2 - Classification rate : " + str(rate))
+    
+    print("3 - Matrice de confusion :")
+    mat = matrice_confusion(Y, Y_hat)
+    
+    plt.figure(figsize=(3,3))
+    plt.imshow(mat)
+
+#C - Modélisation des profils de chiffre
+
+
 
