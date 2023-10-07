@@ -72,17 +72,14 @@ def log_likelihood(X_train_i, mu_i, sig_i, defeps):
     return res
 
 def classify_image(X_train_i, mu, sig, eps):
-    
-    classe = 0
-    res = - math.inf
+    res = -np.inf
+    likelihoods = np.zeros(10)
     
     for i in range(10):
-        vrai = log_likelihood(X_train_i, mu[i], sig[i], eps)
-        if  vrai >= res:
-            res = vrai
-            classe = i
-            
-    return classe
+        likelihoods[i] = log_likelihood(X_train_i, mu[i], sig[i], eps)
+    
+    return np.argmax(likelihoods)
+
 
 def classify_all_images(X_train, mu, sig, eps):
     
@@ -143,7 +140,6 @@ def logpobsBernoulli(X, theta, epsilon):
     theta_sans_0 = np.where(theta < epsilon, epsilon, np.where(theta > (1 - epsilon), 1 - epsilon, theta))
     return np.sum(X * np.log(theta_sans_0) + (1 - X) * np.log(1 - theta_sans_0), axis=1)
 
-
 def classifBernoulliTest(Xb, Y, theta):
     print("1 - Classify all test images ...") 
     mu,sig = learnML_parameters(Xb,Y,)
@@ -160,5 +156,13 @@ def classifBernoulliTest(Xb, Y, theta):
 
 #C - Modélisation des profils de chiffre
 
+def learnGeom(Xg_train, Y, seuil):
+    return np.array([1/np.mean(Xg_train[Y==i],axis = 0) for i in range(10)])
 
+def logpobsGeom(Xg_test_i, theta):
+    X = theta * (1 - 2 * 1e-4) + 1e-4
+    return np.sum(np.log(X) + (Xg_test_i -1) * np.log(1 - X), axis = 1)
+
+def classifyGeom(Xg_train_i, theta):
+    return np.argmax(logpobsGeom(Xg_train_i, theta))
 
