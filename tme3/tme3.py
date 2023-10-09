@@ -8,6 +8,8 @@ import math
 import matplotlib.pyplot as plt
 import pickle as pkl
 
+# A -Apprentissage et évaluation d'un modèle gaussien naïf
+
 #fonction avec np.mean et np.std
 def learnML_parameters(X_train, Y_train):
     n, d = X_train.shape
@@ -53,6 +55,8 @@ def learnML_parameters(X_train, Y_train):
             
     return mu,sig"""
         
+
+#Calcul du log de la vraisemblance avec chaque classe pour une image donnée
     
 def log_likelihood(X_train_i, mu_i, sig_i, defeps):
     
@@ -61,6 +65,7 @@ def log_likelihood(X_train_i, mu_i, sig_i, defeps):
     for i in range(X_train_i.shape[0]):
         if sig_i[i] != 0:
             res += np.log(2*np.pi*sig_i[i]**2) + (X_train_i[i] - mu_i[i])**2/sig_i[i]**2
+        #Prise en compte des valeurs spéciales de defeps
         else:
             if defeps == -1:
                 res += -2
@@ -70,6 +75,9 @@ def log_likelihood(X_train_i, mu_i, sig_i, defeps):
     res *= -1/2
     
     return res
+
+
+#Classification de l'image en trouvant la plus grande vraisemblance selon la fonction ci-dessus
 
 def classify_image(X_train_i, mu, sig, eps):
     res = -np.inf
@@ -81,6 +89,8 @@ def classify_image(X_train_i, mu, sig, eps):
     return np.argmax(likelihoods)
 
 
+#Classification de toutes les images en utilisant la fonction ci-dessus pour chaque image
+
 def classify_all_images(X_train, mu, sig, eps):
     
     classe = np.zeros(X_train.shape[0])
@@ -90,14 +100,21 @@ def classify_all_images(X_train, mu, sig, eps):
         
     return classe
 
+
+#Elaboration de la matrice calculant à quel point notre classification est juste
+
 def matrice_confusion(Y_train, Y_train_hat):
     
     mat = np.zeros((10,10))
     
+    #On ajoute nos prédictions en abscisse et la classe réelle en ordonnée, plus nos prédictions sont justes et plus il y aura de valeurs dans la diagonale
+    
     for i in range(Y_train.shape[0]):
-        mat[int(Y_train[i])][int(Y_train_hat[i])] += 1
-            
+        mat[int(Y_train[i])][int(Y_train_hat[i])] += 1 
+
     return mat
+
+#Calcul du taux de prédictions correctes en regardant les valeurs sur la diagonale de notre matrice
 
 def classificationRate(Y_train, Y_train_hat):
     
@@ -107,6 +124,7 @@ def classificationRate(Y_train, Y_train_hat):
     
     return rate
 
+#On calcule les mêmes données que précedemment mais avec les paramètres appris pour une estimation du taux de prédictions qui ne se base pas sur ce avec quoi on l'a calculé
 
 def classifTest(X_test,Y_test,mu,sig,eps):
     
@@ -127,20 +145,41 @@ def classifTest(X_test,Y_test,mu,sig,eps):
 
 #B - Modélisation par une loi de Bernoulli
 
+
+#On binarise les images pour qu'il n'y ait plus un gradient noir/blanc mais une binarisation illuminé/non illuminé en considérant les pixels non illuminées comme ceux ayant une valeur de gris inférieure à 1, et le reste est illuminé
+
 def binarisation(X):
+    
     return np.where(X>0,1,0)
 
+
+#Calcul pour chaque image de sa probabilité d'appartenance à chaque classe
+
 def learnBernoulli(Xb, Y):
+    
     theta = []
+    
     for i in range(10):
         theta.append(Xb[Y==i].mean(axis=0))
+    
     return np.array(theta)
 
+
+#Calcul du log de la vraisemblance entre epsilon et 1-epsilon car log X n'est pas défini pour X=0
+
 def logpobsBernoulli(X, theta, epsilon):
+    
     theta_sans_0 = np.where(theta < epsilon, epsilon, np.where(theta > (1 - epsilon), 1 - epsilon, theta))
+    
     return np.sum(X * np.log(theta_sans_0) + (1 - X) * np.log(1 - theta_sans_0), axis=1)
 
+#On remarque qu'il n'y a qu'une valeur positive dans le tableau, nous pouvons supposer que la binarisation des images a permis de les différencier par classes plus facilement, étant donné que dans nos tests qui prenaient en compte le gradient de gris, nous n'avions pas une différence aussi marquée
+
+
+#On classifie les images et regarde notre précision comme on l'avait fait en A
+
 def classifBernoulliTest(Xb, Y, theta):
+    
     print("1 - Classify all test images ...") 
     mu,sig = learnML_parameters(Xb,Y,)
     Y_hat = classify_all_images(Xb, mu, sig, -1)
@@ -153,6 +192,7 @@ def classifBernoulliTest(Xb, Y, theta):
     
     plt.figure(figsize=(3,3))
     plt.imshow(mat)
+
 
 #C - Modélisation des profils de chiffre
 
