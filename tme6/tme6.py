@@ -141,10 +141,20 @@ def logL_Sequence(s, Pi, A):
 
     return logL
 
+def compute_all_ll(Xd, models):
+    log_likelihoods = []
 
-    
+    for signal in Xd:
+        signal_log_likelihoods = []
 
-    
-    
-            
-        
+        for model in models.values():
+            Pi, A = model
+            logL = logL_Sequence(signal, Pi, A)
+            signal_log_likelihoods.append(logL)
+
+        log_likelihoods.append(signal_log_likelihoods)
+
+    return np.array(log_likelihoods)
+#compute_all_ll = lambda Xd, models: [[logL_Sequence(signal, model[0], model[1]) for model in models.values()] for signal in Xd]
+
+
