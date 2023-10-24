@@ -128,26 +128,17 @@ def stationary_distribution_fixed_point_VP(A):
     vp = np.linalg.eig(A.T)[1][:,0]
     return (vp / vp.sum()).reshape(-1, 1)
 
-"""def logL_Sequence(s, Pi, A):
-    N = len(s)
-    d = len(Pi)
-    alpha = np.zeros((N, d))
-
-    for i in range(d):
-        alpha[0][i] = Pi[i]
-
-    for t in range(1, N):
-        for j in range(d):
-            alpha[t][j] = np.dot(alpha[t-1], A[:, j]) * (A[:, j][int(s[t])])
-
-    logL = np.sum(alpha[-1])
-
-    return np.log(logL)"""
+#Inférence :  classificartion de séquences (affectation dans les classes sur critère MV)
 
 def logL_Sequence(s, Pi, A):
+
+    s = [int(i) for i in s]
+
     logL = np.log(Pi[s[0]])
+
     for i in range(1, len(s)):
         logL += np.log(A[s[i-1]][s[i]])
+
     return logL
 
 
