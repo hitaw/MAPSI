@@ -128,7 +128,7 @@ def stationary_distribution_fixed_point_VP(A):
     vp = np.linalg.eig(A.T)[1][:,0]
     return (vp / vp.sum()).reshape(-1, 1)
 
-def logL_Sequence(s, Pi, A):
+"""def logL_Sequence(s, Pi, A):
     N = len(s)
     d = len(Pi)
     alpha = np.zeros((N, d))
@@ -142,7 +142,13 @@ def logL_Sequence(s, Pi, A):
 
     logL = np.sum(alpha[-1])
 
-    return np.log(logL)
+    return np.log(logL)"""
+
+def logL_Sequence(s, Pi, A):
+    logL = np.log(Pi[s[0]])
+    for i in range(1, len(s)):
+        logL += np.log(A[s[i-1]][s[i]])
+    return logL
 
 
     
