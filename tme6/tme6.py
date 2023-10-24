@@ -128,6 +128,11 @@ def stationary_distribution_fixed_point_VP(A):
     vp = np.linalg.eig(A.T)[1][:,0]
     return (vp / vp.sum()).reshape(-1, 1)
 
+def logL_Sequence(s, Pi, A):
+    log_likelihood = np.log(Pi[s[0]])
+    for t in range(len(s) - 1):
+        log_likelihood += np.log(A[s[t], s[t+1]])
+    return log_likelihood
 
     
 
