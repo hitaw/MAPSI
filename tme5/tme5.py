@@ -77,7 +77,15 @@ def create_parents(data, dico, X, alpha):
 
 #Apprentissage de la structure d'un réseau bayésien
 def learn_BN_structure(data, dico, alpha):
-    pass
+    num_nodes = len(dico)
+    BN_structure = []
+
+    for node in range(num_nodes):
+        parents = create_parents(data, dico, node, alpha)
+        BN_structure.append(parents)
+
+    return BN_structure
+
 
 
 
