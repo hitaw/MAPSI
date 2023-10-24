@@ -64,16 +64,16 @@ def best_candidate(data, dico, X, Z, alpha):
     return best_Y
 
 #Création des parents d'un noeud
-def create_parents(data, dico, x, alpha):
-    z = []
+def create_parents(data, dico, X, alpha):
+    Z = []
     while True:
-        candidate_list = best_candidate(data, dico, x, z, alpha)
+        candidate_list = best_candidate(data, dico, X, Z, alpha)
         if candidate_list:
-            y = candidate_list[0]
-            z.append(y)
+            Y = candidate_list[0]
+            Z.append(Y)
         else:
             break
-    return z
+    return Z
 
 #Apprentissage de la structure d'un réseau bayésien
 def learn_BN_structure(data, dico, alpha):
