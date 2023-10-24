@@ -126,7 +126,8 @@ def stationary_distribution_fixed_point(A, epsilon):
 
 def stationary_distribution_fixed_point_VP(A):
     vp = np.linalg.eig(A.T)[1][:,0]
-    return vp / vp.sum()
+    return (vp / vp.sum()).reshape(-1, 1)
+
 
     
 
