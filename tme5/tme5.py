@@ -3,6 +3,9 @@
 
 import utils
 import numpy as np
+import scipy.stats as stats
+
+#Statistique du chi² conditionnel
 
 def sufficient_statistics(data, dico, X, Y, Z):
     
@@ -41,3 +44,33 @@ def sufficient_statistics(data, dico, X, Y, Z):
     degre = np.abs(len(Nxz[0])-1) * np.abs(len(Nyz[0])-1) * z_not_0
                         
     return (res, degre)
+
+#Test d'indépendance
+def indep_score(data, dico, X, Y, Z):
+    res, degre = sufficient_statistics(data, dico, X, Y, Z)
+    return stats.chi2.sf(res, degre)
+
+#Meilleur candidat pour être parent
+def best_candidate(data, dico, X, Z, alpha):
+    score = []
+
+    if X != 0:
+
+        for Y in range(X):
+            pass
+
+#Création des parents d'un noeud
+def create_parents(data, dico, X, alpha):
+    pass
+
+#Apprentissage de la structure d'un réseau bayésien
+def learn_BN_structure(data, dico, alpha):
+    pass
+
+
+
+    
+    
+
+
+
