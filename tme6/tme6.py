@@ -34,7 +34,8 @@ def groupByLabel(Y):
     return group
         
 def learnMarkovModel(X, d):
-    
+    #Inférence : classification de séquences (affectation dans les classes sur critère MV)
+
     dis = discretise(X, d)
     A = np.zeros((d, d))
     Pi = np.zeros(d)
@@ -141,20 +142,15 @@ def logL_Sequence(s, Pi, A):
 
     return logL
 
+#Xd[0] n'est pas bien classé. En effet, il est classé en tant que z alors que c'est un a
+
 def compute_all_ll(Xd, models):
-    log_likelihoods = []
+    ll = dict()
 
-    for signal in Xd:
-        signal_log_likelihoods = []
-
-        for model in models.values():
-            Pi, A = model
-            logL = logL_Sequence(signal, Pi, A)
-            signal_log_likelihoods.append(logL)
-
-        log_likelihoods.append(signal_log_likelihoods)
-
-    return np.array(log_likelihoods)
-#compute_all_ll = lambda Xd, models: [[logL_Sequence(signal, model[0], model[1]) for model in models.values()] for signal in Xd]
+    for c in models:
+        Pi, A = models[c]
+        ll[c] = [logL_Sequence(X, Pi, A) for X in Xd]
+    
+    return np.array(list(ll.values()))
 
 
