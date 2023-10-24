@@ -31,7 +31,7 @@ def groupByLabel(Y):
     for i in range(len(Y)):
         group[Y[i]].append(i)
 
-    return groupapprendre
+    return group
         
 def learnMarkovModel(X, d):
     
@@ -127,8 +127,17 @@ def stationary_distribution_fixed_point(A, epsilon):
 def stationary_distribution_fixed_point_VP(A, epsilon=1e-10):
     
     A = A - np.eye(len(A))
-           
-    pass
+
+    n = A.shape[0]
+    AT = A.T
+    v = np.ones(n) / n  # Initialisation avec un vecteur uniforme
+    
+    while True:
+        v_new = np.dot(v, AT)
+        v_new /= np.linalg.norm(v_new, ord=1)  # Normalisation L1
+        if np.linalg.norm(v_new - v, ord=1) < epsilon:
+            return v_new
+        v = v_new
     
 
     
