@@ -124,20 +124,10 @@ def stationary_distribution_fixed_point(A, epsilon):
 
     return np.dot(Pi, A)
 
-def stationary_distribution_fixed_point_VP(A, epsilon=1e-10):
-    
-    A = A - np.eye(len(A))
+def stationary_distribution_fixed_point_VP(A):
+    vp = np.linalg.eig(A.T)[1][:,0]
+    return vp / vp.sum()
 
-    n = A.shape[0]
-    AT = A.T
-    v = np.ones(n) / n  # Initialisation avec un vecteur uniforme
-    
-    while True:
-        v_new = np.dot(v, AT)
-        v_new /= np.linalg.norm(v_new, ord=1)  # Normalisation L1
-        if np.linalg.norm(v_new - v, ord=1) < epsilon:
-            return v_new
-        v = v_new
     
 
     
