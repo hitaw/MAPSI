@@ -52,12 +52,16 @@ def indep_score(data, dico, X, Y, Z):
 
 #Meilleur candidat pour être parent
 def best_candidate(data, dico, X, Z, alpha):
-    score = []
-
-    if X != 0:
-
-        for Y in range(X):
-            pass
+    best_Y = []
+    min_p_value = alpha
+    
+    for Y in range(X):
+        p_value = indep_score(data, dico, X, Y, Z)
+        if p_value < min_p_value:
+            best_Y = [Y]
+            min_p_value = p_value
+    
+    return best_Y
 
 #Création des parents d'un noeud
 def create_parents(data, dico, X, alpha):
