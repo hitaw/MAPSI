@@ -40,22 +40,42 @@ def viterbi(genome_test,Pi,A,B):
     psi = np.zeros((len(A), len(genome_test)))
     psi[:,0]= -1
     delta = np.zeros((len(A), len(genome_test)))
-    for i in range(len(A)):
-        delta[i][0] = np.log(Pi[i]) + np.log(B[i][genome_test[i]])
+    delta[:,0] = np.log(Pi) + np.log(B[:,genome_test[0]])
     
     #récursion
-    for i in range(len(A)):
-        for j in range(1, len(genome_test)-1):
-            delta[i][j] = (np.max(delta[:,j-1] + np.log(A[i][j])) + np.log(B[i][genome_test[i]])
-            psi[i][j] = np.max(delta[:,j-1] + np.log(A[i][j])
+
+    log_A = np.log(A)
+    log_B = np.log(B)
+    for t in range(1, len(genome_test)-1):
+        for j in range(len(A)):
+            best = delta[:,t-1] + log_A[:,j]
+            delta[j][t] = np.max(best) + np.log(B[j][genome_test[t]])
+            psi[j][t] = np.argmax(best)
 
     #terminaison
-    S = np.zeros(len(genome_test))                           
-    St = np.max(delta[:,len(genome_test)]
-    S[len(S)] = St
-    for i in range (len(S)):
-        S[len(S)-i] = np.max(psi[:,len(S)-1]) * S[len(S)]
-    
-    etats_predits = S
+    k = np.argmax(delta[:, -1])
+
+    # Chemin
+    q = []
+    for i in reversed(range(len(genome_test)-1)):
+        q.append(k)
+        k = psi[int(k), i+1]
       
-    return etats_predits
+    return np.array(q[::-1])
+
+def get_and_show_coding(etat_predits,annotation_test):
+    codants_predits = etat_predits[etat_predits!=0]
+    codants_test = [annotation_test[annotation_test!=0]]
+    etat_predits[etat_predits!=0]=1 
+    annotation_test[annotation_test!=0]=1
+    fig, ax = plt.subplots(figsize=(15,2))
+    ax.plot(etat_predits[100000:200000], label="prediction", ls="--")
+    ax.plot(annotation_test[100000:200000], label="annotation", lw=3, color="black", alpha=.4)
+    plt.legend(loc="best")
+    plt.show()
+    return codants_predits, codants_test
+
+#Evaluation des performances
+
+def create_confusion_matrix(codants_predits, codants_tests):
+    pass
