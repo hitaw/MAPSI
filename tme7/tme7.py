@@ -93,7 +93,7 @@ def create_confusion_matrix(codants_predits, codants_tests):
     return confusion_matrix
 
 """
-Il semble y avoir une inversion des Faux Négatifs et des Faux Positifs dans le pdf de l'énoncé. 
+Il semble y avoir une inversion des Faux Négatifs et des Faux Positifs dans le pdf de l'énoncé.
 En effet, un faux négatif est ajouté à la case [1][0] et est obtenu quand la prédiction (états_predits) = 0 et que l'annotation (annotation_test) = 1.
 C'est ce qui est fait dans la fonction create_confusion_matrix ci-dessus, pourtant les résultats de l'énoncé indiquent l'inverse.
 """
