@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-#Apprentissage de la CMC
+#2 - Apprentissage de la CMC
 
 def learnHMM(genome_train, annotation_train, nb_etat, nb_observation):
     
@@ -32,7 +32,7 @@ def learnHMM(genome_train, annotation_train, nb_etat, nb_observation):
     return A,B
                 
      
-#Estimation par Viterbi
+# 3 - Estimation par Viterbi
         
 def viterbi(genome_test,Pi,A,B):
     
@@ -61,6 +61,10 @@ def viterbi(genome_test,Pi,A,B):
       
     return np.array(etats_predits[::-1])
 
+"""
+Viterbi peut prendre beaucoup de temps mais fonctionne
+"""
+
 def get_and_show_coding(etat_predits,annotation_test):
     codants_predits = etat_predits.copy()
     codants_test = annotation_test.copy()
@@ -73,7 +77,7 @@ def get_and_show_coding(etat_predits,annotation_test):
     plt.show()
     return codants_predits, codants_test
 
-#Evaluation des performances
+# 4 - Evaluation des performances
 
 def create_confusion_matrix(codants_predits, codants_tests):
     confusion_matrix = np.zeros((2,2))
@@ -98,8 +102,9 @@ C'est ce qui est fait dans la fonction create_confusion_matrix ci-dessus, pourta
 En ce qui concerne les performances, le modèle n'est pas utilisable en tant que tel. En effet, le nombre de faux positifs est bien trop élevé.
 """
 
+# 5 - Génération de nouvelles séquences
+
 def create_seq(N,Pi,A,B,states,obs):
-    """Retourne une séquence d'observations et d'états générée par le HMM"""
     etats = np.zeros(N)
     etats[0] = np.random.choice(states, p=Pi)
     for i in range(1,N):
@@ -110,3 +115,29 @@ def create_seq(N,Pi,A,B,states,obs):
         obsers.append(np.random.choice(obs, p=B[int(etats[i])]))
 
     return etats, np.array(obsers)
+
+# 6 - Construction d'un nouveau modèle
+
+"""
+Erreur de frappe sur le ipynb de l'énoncé : get_annoatation2 au lieu de get_annotation2
+"""
+
+def get_annotation2(annotation_train):
+    start = True
+    annotation_train2 = annotation_train.copy()
+    for i in range(len(annotation_train2)):
+        if annotation_train2[i] != 0:
+            if not start:
+                annotation_train2[i] += 3
+            elif annotation_train2[i] == 3:
+                start = False
+
+        elif annotation_train2[i] == 0 and not start:
+            start = True
+            annotation_train2[i-3] += 3
+            annotation_train2[i-2] += 3
+            annotation_train2[i-1] += 3
+
+    return annotation_train2
+
+
