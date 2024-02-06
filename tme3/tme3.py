@@ -1,6 +1,3 @@
-#Léa Movsessian 28624266
-#Timothée Colin 21206121
-
 # Apprentissage 
 
 import numpy as np

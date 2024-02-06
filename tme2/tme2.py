@@ -1,5 +1,3 @@
-#Timothe Colin 21206121
-#Lea Movsessian 28624266
 
 import math
 import random

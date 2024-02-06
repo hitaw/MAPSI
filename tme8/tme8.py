@@ -1,6 +1,3 @@
-#Léa MOVSESSIAN 28624266
-#Timothé COLIN 21206121
-
 import numpy as np
 import matplotlib.pyplot as plt
 

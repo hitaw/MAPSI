@@ -1,6 +1,3 @@
-#Léa MOVSESSIAN 28624266
-#Colin TIMOTHE 21206121
-
 import utils
 import numpy as np
 import scipy.stats as stats
